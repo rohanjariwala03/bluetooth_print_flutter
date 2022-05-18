@@ -1,16 +1,26 @@
+# ROHAN JARIWALA
+
 # bluetooth_print_test
 
-A new Flutter project.
+## Give permission in android manifest
 
-## Getting Started
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
-This project is a starting point for a Flutter application.
+## Add packages
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  [intl](https://pub.dev/packages/intl)
+  [bluetooth_print](https://pub.dev/packages/bluetooth_print)
+  [bluetooth_thermal_printer](https://pub.dev/packages/bluetooth_thermal_printer)
+  [esc_pos_utils](https://pub.dev/packages/esc_pos_utils)
+  intl: ^0.17.0
+  esc_pos_utils: ^1.1.0
+  bluetooth_print: ^3.0.1
+  bluetooth_thermal_printer: ^0.0.6
+  
+ ## code
+  
+  Copy & paste main.dart
+  
