@@ -1,15 +1,18 @@
 import 'dart:async';
+
 import 'package:bluetooth_thermal_printer/bluetooth_thermal_printer.dart';
-import 'package:esc_pos_utils/esc_pos_utils.dart';
+import 'package:esc_pos_utils_plus/esc_pos_utils.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -22,17 +25,17 @@ class _MyAppState extends State<MyApp> {
   List availableBluetoothDevices = [];
 
   Future<void> getBluetooth() async {
-    final List? bluetooths = await BluetoothThermalPrinter.getBluetooths;
-    print("Print $bluetooths");
+    final List? bluetooth = await BluetoothThermalPrinter.getBluetooths;
+    debugPrint("Print $bluetooth");
     setState(() {
-      availableBluetoothDevices = bluetooths!;
+      availableBluetoothDevices = bluetooth!;
     });
   }
 
   Future<void> setConnect(String mac) async {
-    print('string ' + mac.toString());
+    debugPrint('string $mac');
     final String? result = await BluetoothThermalPrinter.connect(mac);
-    print("state conneected $result");
+    debugPrint("state conneected $result");
     if (result == "true") {
       setState(() {
         connected = true;
@@ -45,7 +48,7 @@ class _MyAppState extends State<MyApp> {
     if (isConnected == "true") {
       List<int> bytes = await getTicket();
       final result = await BluetoothThermalPrinter.writeBytes(bytes);
-      print("Print $result");
+      debugPrint("Print $result");
     } else {
       //Hadnle Not Connected Senario
     }
@@ -53,15 +56,16 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> printGraphics() async {
     String? isConnected = await BluetoothThermalPrinter.connectionStatus;
-    print("hello " + isConnected.toString());
+    debugPrint("hello $isConnected");
     if (isConnected == "true") {
       List<int> bytes = await getGraphicsTicket();
       var result = await BluetoothThermalPrinter.writeBytes(bytes);
-      result = await BluetoothThermalPrinter.writeText("Bienvenu a Gyu-Kaku Montreal\n"
+      result = await BluetoothThermalPrinter.writeText(
+          "Bienvenu a Gyu-Kaku Montreal\n"
           "(514) 866-8808"
           "\n1255 Rue Crescent"
           "\nMontreal, QC H3G 2B1");
-      print("Print $result");
+      debugPrint("Print $result");
     } else {
       //Hadnle Not Connected Senario
     }
@@ -91,43 +95,41 @@ class _MyAppState extends State<MyApp> {
     List<int> bytes = [];
     CapabilityProfile profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm80, profile);
+    bytes += generator.text("",
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
     bytes += generator.text(
-        "",
-        styles: PosStyles(align: PosAlign.center),linesAfter: 1);
+      "Bienvenu a Guy-Kaku Montreal",
+      styles: const PosStyles(
+        align: PosAlign.center,
+        height: PosTextSize.size1,
+        width: PosTextSize.size1,
+        bold: true,
+      ),
+    );
     bytes += generator.text(
-        "Bienvenu a Guy-Kaku Montreal",
-        styles: PosStyles(
+      "(514) 866-8808\n1255 Rue Crescent,\nMontreal, QC H3G 2B1",
+      styles: const PosStyles(
           align: PosAlign.center,
           height: PosTextSize.size1,
           width: PosTextSize.size1,
-          bold: true
-        ),
+          bold: true),
     );
-    bytes += generator.text(
-        "(514) 866-8808\n1255 Rue Crescent,\nMontreal, QC H3G 2B1",
-        styles: PosStyles(
-          align: PosAlign.center,
-          height: PosTextSize.size1,
-          width: PosTextSize.size1,
-            bold: true
-        ),
-    );
-    bytes += generator.text(
-        "",
-        styles: PosStyles(align: PosAlign.center),linesAfter: 1);
+    bytes += generator.text("",
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
     bytes += generator.row([
       PosColumn(
-          text: 'Server: Tida',
-          width: 6,
-          styles: PosStyles(
-            align: PosAlign.left,
-            height: PosTextSize.size1,
-            width: PosTextSize.size1,
-          ),),
+        text: 'Server: Tida',
+        width: 6,
+        styles: const PosStyles(
+          align: PosAlign.left,
+          height: PosTextSize.size1,
+          width: PosTextSize.size1,
+        ),
+      ),
       PosColumn(
           text: "05/05/2022",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -137,7 +139,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: '1000/1',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -145,7 +147,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "11:55 AM",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -155,7 +157,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: 'Guests: 0',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -163,21 +165,20 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: '',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
           )),
     ]);
-    bytes += generator.text(
-        "",
-        styles: PosStyles(align: PosAlign.center),linesAfter: 1);
+    bytes += generator.text("",
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
 
     bytes += generator.row([
       PosColumn(
           text: 'Fiscal Transaction ID:',
           width: 8,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -185,34 +186,32 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "20220505115503",
           width: 4,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
           )),
     ]);
     bytes += generator.text('Order Type: Take-Out',
-        styles: PosStyles(align: PosAlign.left)
-    );
+        styles: const PosStyles(align: PosAlign.left));
 
     bytes += generator.text('Area: TakeOut',
-        styles: PosStyles(align: PosAlign.left));
+        styles: const PosStyles(align: PosAlign.left));
 
     bytes += generator.text('Menu: HH Lunch Server',
-        styles: PosStyles(align: PosAlign.left));
+        styles: const PosStyles(align: PosAlign.left));
 
     bytes += generator.text('Day Part: Lunch',
-        styles: PosStyles(align: PosAlign.left),linesAfter: 1);
+        styles: const PosStyles(align: PosAlign.left), linesAfter: 1);
 
     bytes += generator.text('TakeOut Order',
-        styles: PosStyles(align: PosAlign.left),linesAfter: 1);
-
+        styles: const PosStyles(align: PosAlign.left), linesAfter: 1);
 
     bytes += generator.row([
       PosColumn(
           text: 'Sukiyaki FriedRice w/Beef',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -220,7 +219,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "14.95",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -231,7 +230,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: 'Sukiyaki FriedRice w/Beef',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -239,21 +238,20 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "14.95",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
           )),
     ]);
-    bytes += generator.text(
-        "",
-        styles: PosStyles(align: PosAlign.center),linesAfter: 1);
+    bytes += generator.text("",
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
 
     bytes += generator.row([
       PosColumn(
           text: 'Complete Subtotal',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -261,7 +259,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "22.95",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -271,7 +269,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: 'TPS',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
@@ -279,20 +277,19 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "0.95",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size1,
             width: PosTextSize.size1,
           )),
     ]);
-    bytes += generator.text(
-        "",
-        styles: PosStyles(align: PosAlign.center),linesAfter: 1);
+    bytes += generator.text("",
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
     bytes += generator.row([
       PosColumn(
           text: 'TOTAL',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
@@ -300,7 +297,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "35\$",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size2,
             width: PosTextSize.size2,
@@ -312,23 +309,23 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: 'No',
           width: 1,
-          styles: PosStyles(align: PosAlign.left, bold: true)),
+          styles: const PosStyles(align: PosAlign.left, bold: true)),
       PosColumn(
           text: 'Item',
           width: 5,
-          styles: PosStyles(align: PosAlign.left, bold: true)),
+          styles: const PosStyles(align: PosAlign.left, bold: true)),
       PosColumn(
           text: 'Price',
           width: 2,
-          styles: PosStyles(align: PosAlign.center, bold: true)),
+          styles: const PosStyles(align: PosAlign.center, bold: true)),
       PosColumn(
           text: 'Qty',
           width: 2,
-          styles: PosStyles(align: PosAlign.center, bold: true)),
+          styles: const PosStyles(align: PosAlign.center, bold: true)),
       PosColumn(
           text: 'Total',
           width: 2,
-          styles: PosStyles(align: PosAlign.right, bold: true)),
+          styles: const PosStyles(align: PosAlign.right, bold: true)),
     ]);
 
     bytes += generator.row([
@@ -336,17 +333,19 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "Tea",
           width: 5,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
           )),
       PosColumn(
           text: "10",
           width: 2,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
           )),
-      PosColumn(text: "1", width: 2, styles: PosStyles(align: PosAlign.center)),
-      PosColumn(text: "10", width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: "1", width: 2, styles: const PosStyles(align: PosAlign.center)),
+      PosColumn(
+          text: "10", width: 2, styles: const PosStyles(align: PosAlign.right)),
     ]);
 
     bytes += generator.row([
@@ -354,17 +353,19 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "Sada Dosa",
           width: 5,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
           )),
       PosColumn(
           text: "30",
           width: 2,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
           )),
-      PosColumn(text: "1", width: 2, styles: PosStyles(align: PosAlign.center)),
-      PosColumn(text: "30", width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: "1", width: 2, styles: const PosStyles(align: PosAlign.center)),
+      PosColumn(
+          text: "30", width: 2, styles: const PosStyles(align: PosAlign.right)),
     ]);
 
     bytes += generator.row([
@@ -372,17 +373,19 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "Masala Dosa",
           width: 5,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
           )),
       PosColumn(
           text: "50",
           width: 2,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
           )),
-      PosColumn(text: "1", width: 2, styles: PosStyles(align: PosAlign.center)),
-      PosColumn(text: "50", width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: "1", width: 2, styles: const PosStyles(align: PosAlign.center)),
+      PosColumn(
+          text: "50", width: 2, styles: const PosStyles(align: PosAlign.right)),
     ]);
 
     bytes += generator.row([
@@ -390,17 +393,19 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "Rova Dosa",
           width: 5,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
           )),
       PosColumn(
           text: "70",
           width: 2,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.center,
           )),
-      PosColumn(text: "1", width: 2, styles: PosStyles(align: PosAlign.center)),
-      PosColumn(text: "70", width: 2, styles: PosStyles(align: PosAlign.right)),
+      PosColumn(
+          text: "1", width: 2, styles: const PosStyles(align: PosAlign.center)),
+      PosColumn(
+          text: "70", width: 2, styles: const PosStyles(align: PosAlign.right)),
     ]);
 
     bytes += generator.hr();
@@ -409,7 +414,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: 'TOTAL',
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.left,
             height: PosTextSize.size4,
             width: PosTextSize.size4,
@@ -417,7 +422,7 @@ class _MyAppState extends State<MyApp> {
       PosColumn(
           text: "160",
           width: 6,
-          styles: PosStyles(
+          styles: const PosStyles(
             align: PosAlign.right,
             height: PosTextSize.size4,
             width: PosTextSize.size4,
@@ -428,14 +433,14 @@ class _MyAppState extends State<MyApp> {
 
     // ticket.feed(2);
     bytes += generator.text('Thank you!',
-        styles: PosStyles(align: PosAlign.center, bold: true));
+        styles: const PosStyles(align: PosAlign.center, bold: true));
 
     bytes += generator.text("26-11-2020 15:22:45",
-        styles: PosStyles(align: PosAlign.center), linesAfter: 1);
+        styles: const PosStyles(align: PosAlign.center), linesAfter: 1);
 
     bytes += generator.text(
         'Note: Goods once sold will not be taken back or exchanged.',
-        styles: PosStyles(align: PosAlign.center, bold: false));
+        styles: const PosStyles(align: PosAlign.center, bold: false));
     bytes += generator.cut();
     return bytes;
   }
@@ -448,18 +453,18 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Bluetooth Thermal Printer Demo'),
         ),
         body: Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Search Paired Bluetooth"),
+              const Text("Search Paired Bluetooth"),
               TextButton(
                 onPressed: () {
-                  this.getBluetooth();
+                  getBluetooth();
                 },
-                child: Text("Search"),
+                child: const Text("Search"),
               ),
-              Container(
+              SizedBox(
                 height: 200,
                 child: ListView.builder(
                   itemCount: availableBluetoothDevices.isNotEmpty
@@ -472,24 +477,24 @@ class _MyAppState extends State<MyApp> {
                         List list = select.split("#");
                         // String name = list[0];
                         String mac = list[1];
-                        this.setConnect(mac);
+                        setConnect(mac);
                       },
                       title: Text('${availableBluetoothDevices[index]}'),
-                      subtitle: Text("Click to connect"),
+                      subtitle: const Text("Click to connect"),
                     );
                   },
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               TextButton(
-                onPressed: this.printGraphics ,
-                child: Text("Print"),
+                onPressed: printGraphics,
+                child: const Text("Print"),
               ),
               TextButton(
-                onPressed: connected ? this.printTicket : null,
-                child: Text("Print Ticket"),
+                onPressed: connected ? printTicket : null,
+                child: const Text("Print Ticket"),
               ),
             ],
           ),
